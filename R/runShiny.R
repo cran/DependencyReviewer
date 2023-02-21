@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU®
+# Copyright 2023 DARWIN EU®
 #
 # This file is part of IncidencePrevalence
 #
@@ -20,16 +20,10 @@
 #'
 #' @return An object that represents the app.
 #'
-#' @importFrom shiny shinyAppDir
-#' @importFrom magrittr %>%
-#' @import shinyAce
-#' @import ggplot2
-#' @import ggraph
-#' @import here
-#' @import DT
-#' @import ggplot2
 #' @import dplyr
-#' @import GGally
+#' @import utils
+#' @importFrom desc description
+#' @importFrom magrittr %>%
 #'
 #' @export
 #'
@@ -39,10 +33,35 @@
 #'   runShiny()
 #' }
 runShiny <- function() {
-  appDir <- system.file(package = "DependencyReviewer", "shinyApp")
-  if (appDir == "") {
-    stop("Could not find shiny application")
+  #desc <- description$new()
+  # reqs <- desc$get_deps() %>%
+  #   dplyr::filter(.data$type == "Suggests") %>%
+  #   dplyr::select(.data$package) %>%
+  #   unlist %>%
+  #   as.character()
+  #
+  # missing <- unlist(lapply(reqs, function(x) {
+  #   if (!requireNamespace(x, quietly = TRUE)) {
+  #     x
+  #   }
+  # }))
+
+  missing <- c()
+  if (length(missing > 0)) {
+    stop(paste(
+      "Additional packages required to run the shiny app. Install them with:",
+      paste0("  install.packages('DependencyReviewer', dependencies = c('Suggests'))"),
+      sep = "\n"
+    ))
   } else {
-    shinyAppDir(appDir)
+    # utils::globalVariables(c(".path"))
+    .GlobalEnv$.path <- here::here("R")
+    appDir <-
+      system.file(package = "DependencyReviewer", "shinyApp")
+    if (appDir == "") {
+      stop("Could not find shiny application")
+    } else {
+      shiny::shinyAppDir(appDir)
+    }
   }
 }

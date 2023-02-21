@@ -2,16 +2,18 @@
 #'
 #' Darwin lintr object, using default lintr object with camelCase
 #'
+#' @param path Default: ".", Path to package
+#'
 #' @return List of lint objects.
 #' @import lintr
 #' @export
 #'
 #' @examples
 #' darwinLintPackage()
-darwinLintPackage <- function() {
+darwinLintPackage <- function(path = ".") {
   tryCatch({
     lintr::lint_package(
-      path = here::here(),
+      path = path,
       linters = lintr::linters_with_defaults(
         lintr::object_name_linter(styles = "camelCase")))
   }, error = function(e) {
@@ -37,12 +39,15 @@ darwinLintPackage <- function() {
 #'
 #' @examples
 #' darwinLintFile(
-#'   fileName = system.file(package = "DependencyReviewer", "testScript.R"))
+#'   fileName = system.file(package = "DependencyReviewer", "testScript.R")
+#' )
 darwinLintFile <- function(fileName) {
   lintr::lint(
     filename = fileName,
     linters = lintr::linters_with_defaults(
-      lintr::object_name_linter(styles = "camelCase")))
+      lintr::object_name_linter(styles = "camelCase")
+    )
+  )
 }
 
 
@@ -62,23 +67,27 @@ darwinLintFile <- function(fileName) {
 #' # With darwin file lintr
 #' darwinLintScore(
 #'   lintFunction = darwinLintFile,
-#'   system.file(package = "DependencyReviewer", "testScript.R"))
+#'   system.file(package = "DependencyReviewer", "testScript.R")
+#' )
 #'
 #' # With standard package lintr
 #' darwinLintScore(
 #'   lintFunction = lintr::lint_package,
-#'   system.file(package = "DependencyReviewer"))
+#'   system.file(package = "DependencyReviewer")
+#' )
 darwinLintScore <- function(lintFunction, ...) {
   lintTable <- data.frame(lintFunction(...))
 
   files <- unique(paste0(
-    unique(lintTable$filename)))
+    unique(lintTable$filename)
+  ))
 
   nLines <- sum(unlist(lapply(
     X = files,
     FUN = function(file) {
       suppressWarnings(length(readLines(file)))
-    })))
+    }
+  )))
 
   pct <- lintTable %>%
     dplyr::group_by(.data$type) %>%
@@ -87,21 +96,26 @@ darwinLintScore <- function(lintFunction, ...) {
 
   if (nrow(pct) == 0) {
     cli::cli_alert_info(cli::col_green(
-      "{nrow(pct)} Lintr messages found"))
+      "{nrow(pct)} Lintr messages found"
+    ))
   } else {
     invisible(lapply(X = seq_len(nrow(pct)), FUN = function(i) {
       if (pct[i, 1] == "error") {
         cli::cli_alert_info(cli::col_red(
-          "{pct[i, 1]}: {pct[i, 2]}% of lines of code have linting messages"))
+          "{pct[i, 1]}: {pct[i, 2]}% of lines of code have linting messages"
+        ))
       } else if (pct[i, 1] == "warning") {
         cli::cli_alert_info(cli::col_yellow(
-          "{pct[i, 1]}: {pct[i, 2]}% of lines of code have linting messages"))
+          "{pct[i, 1]}: {pct[i, 2]}% of lines of code have linting messages"
+        ))
       } else if (pct[i, 1] == "style") {
         cli::cli_alert_info(cli::col_blue(
-          "{pct[i, 1]}: {pct[i, 2]}% of lines of code have linting messages"))
+          "{pct[i, 1]}: {pct[i, 2]}% of lines of code have linting messages"
+        ))
       } else {
         cli::cli_alert_info(cli::col_magenta(
-          "{pct[i, 1]}: {pct[i, 2]}% of lines of code have linting messages"))
+          "{pct[i, 1]}: {pct[i, 2]}% of lines of code have linting messages"
+        ))
       }
     }))
   }

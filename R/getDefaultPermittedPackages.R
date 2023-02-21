@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU®
+# Copyright 2023 DARWIN EU®
 #
 # This file is part of IncidencePrevalence
 #
@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' getDefaultPermittedpackages
+#' getDefaultPermittedPackages
 #'
 #' Gets permitted packages
 #'
@@ -22,8 +22,9 @@
 #' packages.
 #'
 #' @import readr
-#' @import tidyverse
 #' @import utils
+#' @import pak
+#' @importFrom pkgdepends new_pkg_deps
 #'
 #' @export
 #' @examples
@@ -36,7 +37,8 @@ getDefaultPermittedPackages <- function() {
   tmpFile <- list.files(
     path = tempdir(),
     pattern = "tmpPkgs*",
-    full.names = TRUE)
+    full.names = TRUE
+  )
 
   if (length(tmpFile) > 0) {
     message("Get from temp file")
@@ -46,42 +48,40 @@ getDefaultPermittedPackages <- function() {
     tmpFile <- tempfile(
       pattern = "tmpPkgs",
       tmpdir = tempdir(),
-      fileext = ".csv")
+      fileext = ".csv"
+    )
 
     permittedDependencies <- utils::read.table(
       file = "https://raw.githubusercontent.com/mvankessel-EMC/DependencyReviewerWhitelists/main/dependencies.csv",
       sep = ",",
       header = TRUE) %>%
-      tibble()
+      dplyr::tibble()
 
     # Get base packages
     basePackages <- data.frame(utils::installed.packages(
       lib.loc = .Library,
-      priority = "high")) %>%
+      priority = "high"
+    )) %>%
       dplyr::select(.data$Package, .data$Built) %>%
       dplyr::rename(package = .data$Package, version = .data$Built) %>%
       dplyr::tibble()
 
     # Get Tidyverse packages
-    tidyversePackages <- sapply(
-      X = tidyverse::tidyverse_packages(include_self = TRUE),
-      FUN = function(pkg) {
-        as.character(utils::packageVersion(pkg))
-      }
-    )
-
-    tidyversePackages <- tibble(
-      package = names(tidyversePackages),
-      version = tidyversePackages)
+    tidyversePackages <- utils::read.table(
+      file = "https://raw.githubusercontent.com/mvankessel-EMC/DependencyReviewerWhitelists/main/TidyverseDependencies.csv",
+      sep = ",",
+      header = TRUE) %>%
+      dplyr::tibble()
 
     # Get HADES packages
-    hadesPackages <- read.table(
+    hadesPackages <- utils::read.table(
       file = "https://raw.githubusercontent.com/OHDSI/Hades/main/extras/packages.csv",
       sep = ",",
-      header = TRUE) %>% select(.data$name) %>%
-      mutate(version = rep("*", length(names))) %>%
-      rename(package = .data$name) %>%
-      tibble()
+      header = TRUE) %>%
+      dplyr::select(.data$name) %>%
+      dplyr::mutate(version = rep("*", length(names))) %>%
+      dplyr::rename(package = .data$name) %>%
+      dplyr::tibble()
 
     hadesPackages$package <- paste0("OHDSI/", hadesPackages$package)
 
@@ -96,12 +96,13 @@ getDefaultPermittedPackages <- function() {
     permittedPackages <- dplyr::bind_rows(
       basePackages,
       depList %>%
-        select(.data$package, version))
+        dplyr::select(.data$package, version))
 
     message("Writing temp file")
     utils::write.csv(
       x = permittedPackages,
-      file = tmpFile)
+      file = tmpFile
+    )
     return(permittedPackages)
   }
 }

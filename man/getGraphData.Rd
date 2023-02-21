@@ -5,18 +5,18 @@
 \title{getGraphData}
 \usage{
 getGraphData(
-  path = here::here(),
+  path = "./",
   excluded_packages = c(""),
   package_types = c("imports", "depends")
 )
 }
 \arguments{
-\item{path}{path}
+\item{path}{Path to package}
 
 \item{excluded_packages}{Packages to exclude}
 
 \item{package_types}{Types of packages to be included in the result. Default: c("imports", "depends")
-Availible types are: "imports", "depends", "suggests", "enhances", "linkingto"}
+Available types are: "imports", "depends", "suggests", "enhances", "linkingto"}
 }
 \value{
 net_data graph data
@@ -26,7 +26,7 @@ getGraphData
 }
 \examples{
 # Only run in interactive session
-if(interactive()) {
+if (interactive()) {
   graphData <- getGraphData()
 }
 }
