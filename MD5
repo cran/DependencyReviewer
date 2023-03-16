@@ -1,4 +1,4 @@
-98c1c8ca7b86dd3b9502a60baa1625a5 *DESCRIPTION
+cd0e9895f51db569eb1daa895eb8cd7a *DESCRIPTION
 572c41d5db4e54a587590b5e92d454ba *NAMESPACE
 5decb8b995f71bdeff5bf63dbfef5ca6 *R/DependencyReviewer-package.R
 1c23bd097c45fa04e987c15094dc4e45 *R/checkDependencies.R
@@ -13,7 +13,7 @@ a1282cbfce60a06568f577ae92a6d8cf *README.md
 7546980ff621574c725de3c13326511f *inst/WORDLIST
 d9a702e0dc05e44a445816a4253bdbd6 *inst/doc/Documentation.R
 49a7e7168c23fc186ab8f2c4aa0f1262 *inst/doc/Documentation.Rmd
-682dd2cec31974dddde4eaf2b1342eb2 *inst/doc/Documentation.pdf
+12fd8ecd9e47ef02453914a21a5444b8 *inst/doc/Documentation.pdf
 8090e17c6b7737d1e53ee06e3582609b *inst/shinyApp/server.R
 8e7c863e512969edf8fdbea3550e6c4b *inst/shinyApp/ui.R
 40a1c71111751992f944d14f4c839718 *inst/testScript.R
