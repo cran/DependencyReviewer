@@ -116,12 +116,13 @@ if (interactive()) {
 ## ---- echo=FALSE--------------------------------------------------------------
 invisible(capture.output(graphData <- DependencyReviewer::getGraphData()))
 
-## ---- eval=FALSE--------------------------------------------------------------
-#  # Get graphData with only imports
-#  graphData <- DependencyReviewer::getGraphData()
+## -----------------------------------------------------------------------------
+# Get graphData with only imports
+graphData <- getGraphData()
 
 ## ---- out.width="100%", dpi=500, messages=FALSE-------------------------------
-# Calculate colour of nodes based on distances from root package
+if (!is.null(graphData)) {
+  # Calculate colour of nodes based on distances from root package
 cols <- factor(as.character(apply(
   X = distances(graphData, V(graphData)[1]),
   MARGIN = 2,
@@ -143,6 +144,7 @@ ggnet2(
   label.size = 1,
   legend.size = 2
 )
+}
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  runShiny()
